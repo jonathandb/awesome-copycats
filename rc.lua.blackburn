@@ -80,7 +80,7 @@ language = string.gsub(os.getenv("LANG"), ".utf8", "")
 beautiful.init(active_theme .. "/theme.lua")
 
 terminal = "urxvtc"
-editor = os.getenv("EDITOR")
+editor = "nano"
 editor_cmd = terminal .. " -e " .. editor
 gui_editor = "gvim"
 browser = "dwb"
@@ -158,12 +158,13 @@ mymainmenu = awful.menu({ items = {
 				    { "system" , mysystem },
             }
             })
-mylauncher = awful.widget.launcher({ menu = mymainmenu })
+mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
+                                     menu = mymainmenu })
 
 
 -- Wibox
 
--- ColourS
+-- Colours
 coldef  = "</span>"
 white  = "<span color='#d7d7d7'>"
 gray = "<span color='#9e9c9a'>"
@@ -302,61 +303,6 @@ mytextclock:connect_signal("mouse::leave", remove_calendar)
 mytextclock:buttons(util.table.join( awful.button({ }, 1, function() add_calendar(-1) end),
                                      awful.button({ }, 3, function() add_calendar(1) end)))
 
--- GMail widget
--- you need  a .netrc file in your home directory filled with this:
--- machine mail.google.com login YOUR_MAIL password YOUR_PASS
-mygmail = wibox.widget.textbox()
-gmail_t = awful.tooltip({ objects = { mygmail },})
-notify_shown = false
-vicious.register(mygmail, vicious.widgets.gmail,
- function (widget, args)
-  gmail_t:set_text(args["{subject}"])
-  gmail_t:add_to_object(mygmail)
-  notify_title = ""
-  notify_text = ""
-  if (args["{count}"] > 0 ) then
-    if (notify_shown == false) then
-      -- Italian localization
-      -- can be a stub for your own localization
-      if (args["{count}"] == 1) then
-          if language:find("it_IT") ~= nil
-          then
-              notify_title = "Hai un nuovo messaggio"
-          else
-              notify_title = "You got a new mail"
-          end
-          notify_text = '"' .. args["{subject}"] .. '"'
-      else
-          if language:find("it_IT") ~= nil
-          then
-                notify_title = "Hai " .. args["{count}"] .. " nuovi messaggi"
-                notify_text = 'Ultimo: "' .. args["{subject}"] .. '"'
-          else
-                notify_title = "You got " .. args["{count}"] .. " new mails"
-                notify_text = 'Last one: "' .. args["{subject}"] .. '"'
-          end
-      end
-      naughty.notify({
-          title = notify_title,
-          text = notify_text,
-          timeout = 7,
-          position = "top_left",
-          icon = beautiful.widget_mail_notify,
-          fg = beautiful.taglist_fg_focus,
-          bg = "#060606"
-      })
-      notify_shown = true
-    end
-    if perceptive.icon == perceptive.sky_na then return gray .. " Mail " .. coldef .. white .. args["{count}"]  .. coldef
-    else return gray .. " Mail " .. coldef .. white .. args["{count}"] .. "<span font='Tamsyn 1'> </span>"  .. coldef
-    end
-  else
-    notify_shown = false
-    return ''
-  end
-end, 60)
-mygmail:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn(mail, false) end)))
-
 -- Mpd widget
 mpdwidget = wibox.widget.textbox()
 mpdwidget:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(musicplr) end)))
@@ -449,58 +395,6 @@ end
 fshwidget:connect_signal('mouse::enter', function () show_info(0) end)
 fshwidget:connect_signal('mouse::leave', function () remove_info() end)
 
--- Battery widget
-batwidget = wibox.widget.textbox()
-function batstate()
-
-  local file = io.open("/sys/class/power_supply/BAT0/status", "r")
-
-  if (file == nil) then
-    return "Cable plugged"
-  end
-
-  local batstate = file:read("*line")
-  file:close()
-
-  if (batstate == 'Discharging' or batstate == 'Charging') then
-    return batstate
-  else
-    return "Fully charged"
-  end
-end
-vicious.register(batwidget, vicious.widgets.bat,
-function (widget, args)
-  -- plugged
-  if (batstate() == 'Cable plugged') then
-    return ''
-    -- critical
-  elseif (args[2] <= 5 and batstate() == 'Discharging') then
-    naughty.notify{
-      text = "sto per spegnermi...",
-      title = "Carica quasi esaurita!",
-      position = "top_right",
-      timeout = 0,
-      fg="#000000",
-      bg="#ffffff",
-      screen = 1,
-      ontop = true,
-    }
-    -- low
-  elseif (args[2] <= 10 and batstate() == 'Discharging') then
-    naughty.notify({
-      text = "attacca il cavo!",
-      title = "Carica bassa",
-      position = "top_right",
-      timeout = 0,
-      fg="#ffffff",
-      bg="#262729",
-      screen = 1,
-      ontop = true,
-    })
-  end
-  return gray .. "Bat " .. coldef .. white .. args[2] .. " " .. coldef
-end, 1, 'BAT0')
-
 -- Volume widget
 volumewidget = wibox.widget.textbox()
 vicious.register(volumewidget, vicious.widgets.volume,
@@ -536,12 +430,35 @@ end, 10)
 netwidget:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(wifi) end)))
 
 -- Weather widget
-perceptive.register(123456) -- https//github.com/copycat-killer/perceptive
+perceptive.register(970013,"#80d9d8") -- https//github.com/copycat-killer/perceptive
+
+-- Net widget
+netdownicon = wibox.widget.imagebox()
+netdownicon:set_image(beautiful.widget_netdown)
+netdownicon.align = "middle"
+netdowninfo = wibox.widget.textbox()
+vicious.register(netdowninfo, vicious.widgets.net, green .. "${wlan0 down_kb}" .. coldef, 1)
+netupicon = wibox.widget.imagebox()
+netupicon:set_image(beautiful.widget_netup)
+netupicon.align = "middle"
+netupinfo = wibox.widget.textbox()
+vicious.register(netupinfo, vicious.widgets.net, red .. "${wlan0 up_kb}" .. coldef, 1)
+
+
+wifiwidget = wibox.widget.textbox()
+wifiwidget:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell("urxvtc -e sudo wifi-menu") end)))
+wifiwidget_t = awful.tooltip({ objects = {wifiwidget, netdownicon}, })
+vicious.register(wifiwidget, vicious.widgets.wifi, 
+function (widget, args)
+        wifiwidget_t:set_text('<span color="#9868B1"> ' ..args["{ssid}"].. ' \n mode: ' ..args["{mode}"].. ' \n chan: ' ..args["{chan}"].. ' \n sign: ' ..args["{sign}"]..  ' \n rate: ' ..args["{rate}"].. ' </span>')
+        return '<span color="#CDBC73">⇄ ' ..args["{link}"].. '%</span>'
+  end, 2, "wlan0")
+
 
 -- Separators
 spr = wibox.widget.textbox(' ')
-leftbr = wibox.widget.textbox(white .. '<span rise="1000"> [</span>' .. coldef)
-rightbr = wibox.widget.textbox(white .. '<span rise="1000">] </span>' .. coldef)
+leftbr = wibox.widget.textbox(white .. ' [' .. coldef)
+rightbr = wibox.widget.textbox(white .. '] ' .. coldef)
 
 
 -- Layout
@@ -626,15 +543,16 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the upper right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(netdownicon)
+    right_layout:add(netdowninfo)
+    right_layout:add(netupicon)
+    right_layout:add(netupinfo)
     right_layout:add(spr)
     right_layout:add(mpdwidget)
-    right_layout:add(spr)
-    right_layout:add(mygmail)
     right_layout:add(spr)
     right_layout:add(perceptive.icon)
     right_layout:add(perceptive.widget)
     right_layout:add(fshwidget)
-    right_layout:add(batwidget)
     right_layout:add(netwidget)
     right_layout:add(spr)
     right_layout:add(volumewidget)
@@ -852,6 +770,7 @@ root.keys(globalkeys)
 
 
 -- Rules
+-- dwb and gimp rules are set for a 1366x768 laptop
 
 awful.rules.rules = {
      -- All clients will match this rule.
@@ -889,8 +808,25 @@ awful.rules.rules = {
                          floating = false } },
 
     { rule = { class = "Gimp", role = "gimp-image-window" },
-          properties = { maximized_horizontal = true,
+          properties = { x = 138, width = 1024,
                          maximized_vertical = true } },
+
+    { rule = { class = "Gimp", role = "gimp-toolbox" },
+          properties = { x = 0, maximized_vertical = true } },
+
+    { rule = { class = "Gimp", role = "gimp-dock" },
+          properties = { x = 1165, maximized_vertical = true } },
+
+    { rule = { class = "Gimp", role = "gimp-image-new" },
+          properties = { x = 480, y = 240} },
+
+    { rule = { class = "Gimp", role = "gimp-toolbox-color-dialog" },
+          properties = { x = 138, y = 350} },
+
+    { rule = { class = "Gimp", role = "gimp-file-export" },
+          properties = { maximized_vertical = true,
+                         maximized_horizontal = true,
+                         width = 1366 } },
 
     { rule = { class = "Transmission-gtk" },
           properties = { tag = tags[1][5] } },
