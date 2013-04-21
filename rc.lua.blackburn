@@ -542,6 +542,7 @@ for s = 1, screen.count() do
     right_layout:add(netupicon)
     right_layout:add(netupinfo)
     right_layout:add(spr)
+    right_layout:add(wifiwidget)
     right_layout:add(mpdwidget)
     right_layout:add(spr)
     right_layout:add(perceptive.icon)
@@ -549,9 +550,7 @@ for s = 1, screen.count() do
     right_layout:add(netwidget)
     right_layout:add(spr)
     right_layout:add(volumewidget)
-    right_layout:add(spr)
     right_layout:add(mytextclock)
-    right_layout:add(spr)
 
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
