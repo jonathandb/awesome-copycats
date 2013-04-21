@@ -325,36 +325,6 @@ mytextclock:connect_signal("mouse::enter", function() add_calendar(0) end)
 mytextclock:connect_signal("mouse::leave", remove_calendar)
 mytextclock:buttons(util.table.join( awful.button({ }, 1, function() add_calendar(-1) end),
                                      awful.button({ }, 3, function() add_calendar(1) end)))
-
--- Mpd widget
-mpdwidget = wibox.widget.textbox()
-mpdwidget:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(musicplr) end)))
-curr_track = nil
-vicious.register(mpdwidget, vicious.widgets.mpd,
-function(widget, args)
-	if (args["{state}"] == "Play") then
-    if( args["{Title}"] ~= curr_track )
-    then
-        curr_track = args["{Title}"]
-        os.execute(scriptdir .. "mpdinfo")
-        old_id = naughty.notify({
-            title = "Now playing",
-            text = args["{Artist}"] .. " (" .. args["{Album}"] .. ")\n" .. args["{Title}"],
-            icon = "/tmp/mpdnotify_cover.png",
-            bg = "#060606",
-            timeout = 5,
-            replaces_id = old_id
-        }).id
-    end
-		return gray .. args["{Artist}"] .. coldef .. white .. " " .. args["{Title}"] .. coldef
-	elseif (args["{state}"] == "Pause") then
-		return gray .. "mpd " .. coldef .. white .. "in pausa" .. coldef
-	else
-    curr_track = nil
-		return ''
-	end
-end, 1)
-
 -- hhd status notification
 local infos = nil
 
@@ -454,7 +424,52 @@ function (widget, args)
         return '<span color="#CDBC73">⇄ ' ..args["{link}"].. '%</span>'
   end, 2, "wlan0")
 
-
+  local awesompd = require("awesompd/awesompd")
+  musicwidget = awesompd:create() -- Create awesompd widget
+  musicwidget.font = beautiful.font -- Set widget font 
+  musicwidget.scrolling = true -- If true, the text in the widget will be scrolled
+  musicwidget.output_size = 30 -- Set the size of widget in symbols
+  musicwidget.update_interval = 10 -- Set the update interval in seconds
+  -- Set the folder where icons are located (change username to your login name)
+  musicwidget.path_to_icons = home .. "/.config/awesome/awesompd/icons" 
+  -- Set the default music format for Jamendo streams. You can change
+  -- this option on the fly in awesompd itself.
+  -- possible formats: awesompd.FORMAT_MP3, awesompd.FORMAT_OGG
+  musicwidget.jamendo_format = awesompd.FORMAT_MP3
+  -- If true, song notifications for Jamendo tracks and local tracks will also contain
+  -- album cover image.
+  musicwidget.show_album_cover = true
+  -- Specify how big in pixels should an album cover be. Maximum value
+  -- is 100.
+  musicwidget.album_cover_size = 50
+  -- This option is necessary if you want the album covers to be shown
+  -- for your local tracks.
+  musicwidget.mpd_config = home .. "/.mpdconf"
+  -- Specify the browser you use so awesompd can open links from
+  -- Jamendo in it.
+  musicwidget.browser = "chromium"
+  -- Specify decorators on the left and the right side of the
+  -- widget. Or just leave empty strings if you decorate the widget
+  -- from outside.
+  musicwidget.ldecorator = " "
+  musicwidget.rdecorator = " "
+  -- Set all the servers to work with (here can be any servers you use)
+  musicwidget.servers = {
+     { server = "localhost",
+          port = 6600 },
+     { server = "192.168.0.72",
+          port = 6600 } }
+  -- Set the buttons of the widget
+  musicwidget:register_buttons({ { "", awesompd.MOUSE_LEFT, musicwidget:command_toggle() },
+      			         { "Control", awesompd.MOUSE_SCROLL_UP, musicwidget:command_prev_track() },
+ 			         { "Control", awesompd.MOUSE_SCROLL_DOWN, musicwidget:command_next_track() },
+ 			         { "", awesompd.MOUSE_SCROLL_UP, musicwidget:command_volume_up() },
+ 			         { "", awesompd.MOUSE_SCROLL_DOWN, musicwidget:command_volume_down() },
+ 			         { "", awesompd.MOUSE_RIGHT, musicwidget:command_show_menu() },
+                                 { "", "XF86AudioLowerVolume", musicwidget:command_volume_down() },
+                                 { "", "XF86AudioRaiseVolume", musicwidget:command_volume_up() },
+                                 { modkey, "Pause", musicwidget:command_playpause() } })
+  musicwidget:run() -- After all configuration is done, run the widget
 -- Separators
 spr = wibox.widget.textbox(' ')
 leftbr = wibox.widget.textbox(white .. ' [' .. coldef)
@@ -549,7 +564,7 @@ for s = 1, screen.count() do
     right_layout:add(netupinfo)
     right_layout:add(spr)
     right_layout:add(wifiwidget)
-    right_layout:add(mpdwidget)
+    right_layout:add(musicwidget.widget)
     right_layout:add(spr)
     right_layout:add(perceptive.icon)
     right_layout:add(perceptive.widget)
@@ -672,19 +687,19 @@ globalkeys = awful.util.table.join(
     -- Music control
     awful.key({ altkey, "Control" }, "Up", function ()
                                               awful.util.spawn( "mpc toggle", false )
-                                              vicious.force({ mpdwidget } )
+                                              vicious.force({ musicwidget.widget } )
                                            end),
     awful.key({ altkey, "Control" }, "Down", function ()
                                                 awful.util.spawn( "mpc stop", false )
-                                                vicious.force({ mpdwidget } )
+                                                vicious.force({ musicwidget.widget } )
                                              end ),
     awful.key({ altkey, "Control" }, "Left", function ()
                                                 awful.util.spawn( "mpc prev", false )
-                                                vicious.force({ mpdwidget } )
+                                                vicious.force({ musicwidget.widget } )
                                              end ),
     awful.key({ altkey, "Control" }, "Right", function ()
                                                 awful.util.spawn( "mpc next", false )
-                                                vicious.force({ mpdwidget } )
+                                                vicious.force({ musicwidget.widget } )
                                               end ),
 
     -- Copy to clipboard
