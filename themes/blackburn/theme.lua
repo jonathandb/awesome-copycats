@@ -9,8 +9,6 @@
 theme = {}
 
 themes_dir                                  = os.getenv("HOME") .. "/.config/awesome/themes/blackburn"
-themes_bg_normal                            = "png:" .. themes_dir .. "/taskbar/bg_normal.png"
-themes_bg_focus                             = "png:" .. themes_dir .. "/taskbar/bg_focus.png"
 
 theme.wallpaper                             = themes_dir .. "/wall.png"
 
@@ -18,7 +16,7 @@ theme.font                                  = "Tamsyn 10"
 theme.taglist_font                          = "Termsyn 10"
 theme.fg_normal                             = "#D7D7D7"
 theme.fg_focus                              = "#F6784F"
-theme.bg_normal                             = themes_bg_normal
+theme.bg_normal                             = "#000000"
 theme.bg_focus                              = "#060606"
 theme.fg_urgent                             = "#CC9393"
 theme.bg_urgent                             = "#2A1F1E"
@@ -29,9 +27,9 @@ theme.border_marked                         = "#CC9393"
 theme.titlebar_bg_focus                     = "#FFFFFF"
 theme.titlebar_bg_normal                    = "#FFFFFF"
 theme.taglist_fg_focus                      = "#F6784F"
-theme.taglist_bg_focus                      = themes_bg_focus
+theme.taglist_bg_focus                      = "#000000"
 theme.tasklist_fg_focus                     = "#F6784F"
-theme.tasklist_bg_focus                     = themes_bg_normal
+theme.tasklist_bg_focus                     = "#000000"
 theme.textbox_widget_margin_top             = 1
 theme.awful_widget_height                   = 14
 theme.awful_widget_margin_top               = 2
