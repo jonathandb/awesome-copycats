@@ -62,5 +62,7 @@ theme.tasklist_maximized_vertical           = ""
 
 theme.widget_mail_notify                    = themes_dir .. "/icons/mail_notify.png"
 theme.widget_no_net_notify                  = themes_dir .. "/icons/no_net_notify.png"
+theme.widget_netdown                        = themes_dir .. "/icons/net_down.png"
+theme.widget_netup                          = themes_dir .. "/icons/net_up.png"
 
 return theme
