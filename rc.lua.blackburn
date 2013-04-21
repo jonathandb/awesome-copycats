@@ -89,6 +89,9 @@ chat = terminal .. " -e irssi "
 tasks = terminal .. " -e htop "
 wifi = terminal .. " -e sudo wifi-menu "
 musicplr = terminal .. " -g 130x34-320+16 -e ncmpcpp "
+dpoff = "xset -dpms s off && notify-send DPMS off"
+dpon  = "xset +dpms s default && notify-send DPMS on"
+
 
 modkey = "Mod4"
 altkey = "Mod1"
@@ -661,6 +664,13 @@ root.buttons(awful.util.table.join(
 
 -- Key bindings
 globalkeys = awful.util.table.join(
+
+    -- dmenu
+    awful.key({ modkey,            }, "space", function() awful.util.spawn(dmenu,false) end),
+
+    -- Enable/disable dpms
+    awful.key({ modkey,           }, "p",      function() awful.util.spawn_with_shell(dpon,false)  end),
+    awful.key({ modkey, "Shift"   }, "p",      function() awful.util.spawn(dpoff,false) end),
 
     -- Capture a screenshot
     awful.key({ altkey }, "p", function() awful.util.spawn("screenshot",false) end),
