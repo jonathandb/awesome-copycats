@@ -723,7 +723,7 @@ for i = 1, 9 do
         awful.key({ modkey }, "#" .. i + 9,
                   function ()
                         local screen = mouse.screen
-                        local tag = awful.tag.gettags(screen)[i]
+                        local tags = awful.tag.gettags(screen)[i]
                         if tags then
                             awful.tag.viewonly(tags)
                         end
@@ -731,7 +731,7 @@ for i = 1, 9 do
         awful.key({ modkey, "Control" }, "#" .. i + 9,
                   function ()
                         local screen = mouse.screen
-                        local tag = awful.tag.gettags(screen)[i]
+                        local tags = awful.tag.gettags(screen)[i]
                         if tags then
                             awful.tag.viewtoggle(tags)
                         end
