@@ -108,7 +108,13 @@ wifi = terminal .. " -e sudo wifi-menu "
 musicplr = terminal .. " -g 130x34-320+16 -e ncmpcpp "
 dpoff = "xset -dpms s off && notify-send DPMS off"
 dpon  = "xset +dpms s default && notify-send DPMS on"
-
+dmenu = "dmenu_run -p Run" ..  
+            " -i -h 18"   ..
+            "  -fn '" .. beautiful.font_dmenu ..
+            "' -nb '" .. beautiful.bg_normal ..
+            "' -nf '" .. beautiful.fg_normal ..
+            "' -sb '" .. beautiful.bg_focus  ..
+            "' -sf '" .. beautiful.fg_focus  .. "'"
 
 modkey = "Mod4"
 altkey = "Mod1"
