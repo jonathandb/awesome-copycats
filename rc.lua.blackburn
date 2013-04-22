@@ -816,6 +816,10 @@ awful.rules.rules = {
           properties = { tag = tags[1][4],
                          floating = true } },
 
+    { rule = { class = "tmuxmusic" },
+          properties = { tag = tags[1][4],
+                         floating = false } },
+
     { rule = { class = "Gimp" },
           properties = { tag = tags[1][4],
                          floating = false } },
@@ -841,10 +845,10 @@ awful.rules.rules = {
                          maximized_horizontal = true,
                          width = 1366 } },
 
-    { rule = { class = "Transmission-gtk" },
+    { rule = { class = "Qbittorrent" },
           properties = { tag = tags[1][5] } },
 
-    { rule = { class = "Torrent-search" },
+    { rule = { class = "rtorrent" },
           properties = { tag = tags[1][5] } },
 }
 
