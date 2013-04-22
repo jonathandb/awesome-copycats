@@ -402,6 +402,11 @@ netwidget:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.u
 -- Weather widget
 perceptive.register(970013,"#80d9d8") -- https//github.com/copycat-killer/perceptive
 
+-- Temp widget
+tempwidget = wibox.widget.textbox()
+vicious.register(tempwidget, vicious.widgets.thermal, "<span color=\"#f1af5f\">$1°C</span>", 9, {"coretemp.0","core"} )
+
+
 -- Net widget
 netdownicon = wibox.widget.imagebox()
 netdownicon:set_image(beautiful.widget_netdown)
@@ -564,6 +569,8 @@ for s = 1, screen.count() do
     right_layout:add(netupinfo)
     right_layout:add(spr)
     right_layout:add(wifiwidget)
+    right_layout:add(spr)
+    right_layout:add(tempwidget)
     right_layout:add(musicwidget.widget)
     right_layout:add(spr)
     right_layout:add(perceptive.icon)
