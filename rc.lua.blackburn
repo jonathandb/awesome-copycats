@@ -372,7 +372,7 @@ function (widget, args)
   if (args[2] ~= "♩" ) then
      return gray .. "Vol " .. coldef .. white .. args[1] .. " " .. coldef
   else
-     return gray .. "Vol " .. coldef .. white .. "mute " .. coldef
+     return gray .. "Vol " .. coldef .. white .. "m " .. coldef
   end
 end, 1, "Master")
 
