@@ -575,8 +575,7 @@ for s = 1, screen.count() do
     right_layout:add(spr)
     right_layout:add(perceptive.icon)
     right_layout:add(perceptive.widget)
-    right_layout:add(netwidget)
-    right_layout:add(spr)
+    right_layout:add(netwidget) -- right_layout:add(spr)
     right_layout:add(volumewidget)
     right_layout:add(mytextclock)
 
@@ -607,7 +606,7 @@ globalkeys = awful.util.table.join(
 
     -- Enable/disable dpms
     awful.key({ modkey,           }, "p",      function() awful.util.spawn_with_shell(dpon,false)  end),
-    awful.key({ modkey, "Shift"   }, "p",      function() awful.util.spawn(dpoff,false) end),
+    awful.key({ modkey, "Shift"   }, "p",      function() awful.util.spawn_with_shell(dpoff,false) end),
 
     -- Capture a screenshot
     awful.key({ altkey }, "p", function() awful.util.spawn("screenshot",false) end),
